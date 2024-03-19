@@ -46,11 +46,12 @@ public class UserPointServiceImplTest {
         Long point = 1L;
         Long updateMills = 1L;
 
-        // when
         UserPoint expectResult = new UserPoint(userId, point, updateMills);
+        List<UserPointRespDto> result = userPointService.getUserPoint(1L);
 
         // then
-        assertThat(expectResult.id()).isEqualTo(expectResult.id());
+        assertThat(result.equals(userId)).isEqualTo(expectResult.equals(userId));
+        assertThat(result.equals(point)).isEqualTo(expectResult.equals(point));
     }
 
     @Test
@@ -105,7 +106,7 @@ public class UserPointServiceImplTest {
 
 
         // then
-        assertThat(result.contains(userId)).isEqualTo(expectResult.equals(userId));
-        assertThat(result.contains(amount)).isEqualTo(expectResult.equals(amount));
+        assertThat(result.equals(userId)).isEqualTo(expectResult.equals(userId));
+        assertThat(result.equals(amount)).isEqualTo(expectResult.equals(amount));
     }
 }
