@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -20,8 +21,13 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public class UserPointServiceImplTest {
 
+    @Mock
+    private UserPointReqDto userPointReqDto;
+
     @InjectMocks
     private UserPointServiceImpl userPointService;
+
+    @InjectMocks
     private PointHistoryServiceImpl pointHistoryService;
 
     @BeforeEach
@@ -36,12 +42,12 @@ public class UserPointServiceImplTest {
     @DisplayName("사용자 포인트 조회")
     void getUserPointTest() {
         // given
-        Long id = 1L;
+        Long userId = 1L;
         Long point = 1L;
         Long updateMills = 1L;
 
         // when
-        UserPoint expectResult = new UserPoint(id, point, updateMills);
+        UserPoint expectResult = new UserPoint(userId, point, updateMills);
 
         // then
         assertThat(expectResult.id()).isEqualTo(expectResult.id());
@@ -52,13 +58,13 @@ public class UserPointServiceImplTest {
     void getPointHistoryTest() {
 
         // given
-        Long id = 1L;
+        Long userId = 1L;
         Long amount = 1L;
         UserPointReqDto userPointReqDto = new UserPointReqDto(amount);
-        userPointService.increaseUserPoint(id, userPointReqDto.point());
+        userPointService.increaseUserPoint(userId, userPointReqDto.point());
 
         // when
-        List<PointHistory> userPointRespDto = pointHistoryService.getPointHistory(id);
+        List<PointHistory> userPointRespDto = pointHistoryService.getUserPointHistory(userId);
 
         // then
         assertThat(userPointRespDto).isNotEmpty();
@@ -71,13 +77,13 @@ public class UserPointServiceImplTest {
     void increaseUserPoint() {
 
         // given
-        Long id = 1L;
+        Long userId = 1L;
         Long amount = 1L;
         UserPointReqDto userPointRequest = new UserPointReqDto(amount);
 
         // when
         List<UserPointRespDto> expectResult = userPointService.getUserPoint(1L);
-        List<UserPointRespDto> result = userPointService.increaseUserPoint(id, amount);
+        List<UserPointRespDto> result = userPointService.increaseUserPoint(userId, amount);
 
         // then
         assertThat(expectResult).isEqualTo(1);
@@ -89,17 +95,17 @@ public class UserPointServiceImplTest {
     void decreaseUserPointTest() {
 
         // givem
-        Long id = 1L;
+        Long userId = 1L;
         Long amount = 1L;
         UserPointReqDto userPointReqDto = new UserPointReqDto(amount);
 
         // when
-        List<UserPointRespDto> result = userPointService.decreaseUserPoint(id, amount);
-        List<UserPointRespDto> expectResult = userPointService.getUserPoint(id);
+        List<UserPointRespDto> result = userPointService.decreaseUserPoint(userId, amount);
+        List<UserPointRespDto> expectResult = userPointService.getUserPoint(userId);
 
 
         // then
-        assertThat(result.contains(id)).isEqualTo(expectResult.equals(id));
+        assertThat(result.contains(userId)).isEqualTo(expectResult.equals(userId));
         assertThat(result.contains(amount)).isEqualTo(expectResult.equals(amount));
     }
 }
