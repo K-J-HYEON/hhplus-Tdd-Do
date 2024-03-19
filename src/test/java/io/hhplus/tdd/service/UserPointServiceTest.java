@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
-public class UserPointServiceImplTest {
+public class UserPointServiceTest {
 
     @Mock
     private UserPointReqDto userPointReqDto;
