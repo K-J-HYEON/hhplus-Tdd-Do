@@ -61,9 +61,5 @@ public class PointControllerTest {
         Long amount = 1L;
         UserPointReqDto userPointReqDto = new UserPointReqDto(amount);
         pointController.point(id);
-
-        // when
-
-        // then
     }
 }
