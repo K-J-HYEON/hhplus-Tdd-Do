@@ -4,12 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.dto.request.UserPointReqDto;
-import io.hhplus.tdd.point.PointHistory;
-import io.hhplus.tdd.service.PointHistoryService;
-import io.hhplus.tdd.service.PointHistoryServiceImpl;
-import io.hhplus.tdd.service.UserPointService;
-import io.hhplus.tdd.service.UserPointServiceImpl;
-import org.junit.jupiter.api.BeforeAll;
+import io.hhplus.tdd.point.TransactionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // controller 테스트
 /**
@@ -35,31 +33,87 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public class PointControllerTest {
 
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserPointTable userPointTable;
+
+    @Autowired
+    private PointHistoryTable pointHistoryTable;
+
     @Mock
-    private UserPointService userPointService;
-    private PointHistoryService pointHistoryService;
+    private UserPointReqDto userPointReqDto;
 
     @InjectMocks
     private PointController pointController;
 
-    private MockMvc mockMvc;
-
     @BeforeEach
-    void setUp() {
-        UserPointTable userPointTable = new UserPointTable();
-        PointHistoryTable pointHistoryTable = new PointHistoryTable();
-        userPointService = new UserPointServiceImpl(userPointTable);
-        pointHistoryService = new PointHistoryServiceImpl(pointHistoryTable);
+    void setUp() throws InterruptedException {
+        Long userId = 1L;
+        Long amount = 1L;
+        TransactionType transactionType = TransactionType.CHARGE;
+        Long updateMillis = System.currentTimeMillis();
+
+        userPointTable.insertOrUpdate(userId, amount);
+        pointHistoryTable.insert(userId, amount, transactionType, updateMillis);
     }
 
     @Test
-    @DisplayName("사용자 포인토 조회")
-    public void getPointTest() throws InterruptedException {
-
-        // given
-        Long id = 1L;
-        Long amount = 1L;
-        UserPointReqDto userPointReqDto = new UserPointReqDto(amount);
-        pointController.point(id);
+    @DisplayName("사용자 포인트 조회")
+    void getUserPointTest() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/point/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.point").value(100L));
     }
+
+    @Test
+    @DisplayName("사용자 포인트 충전/이용 내역 조회")
+    void getPointHistoryTest() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/point/{id}/histories", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].userId").value(1L))
+                .andExpect(jsonPath("$[0].type").value(TransactionType.CHARGE.toString()))
+                .andExpect(jsonPath("$[0].amount").value(1000L));
+    }
+
+
+    @Test
+    @DisplayName("사용자 포인트 충전")
+    void  increaseUserPointTest() throws Exception {
+        UserPointReqDto userPointReqDto = UserPointReqDto.of(1L);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .patch("/point/{id}/charge", 1L)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(userPointReqDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.point").value(1000L));
+    }
+
+
+    @Test
+    @DisplayName("사용자 포인트 사용")
+    void decreaseUserPointTest() throws Exception {
+        UserPointReqDto userPointReqDto = UserPointReqDto.of(1000L);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .patch("/point/{id}/use", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userPointReqDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.point").value(0L));
+    }
+
 }
