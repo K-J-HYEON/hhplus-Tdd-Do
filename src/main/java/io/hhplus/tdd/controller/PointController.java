@@ -1,9 +1,11 @@
 package io.hhplus.tdd.controller;
 
+import io.hhplus.tdd.dto.request.UserPointReqDto;
 import io.hhplus.tdd.dto.response.UserPointRespDto;
 import io.hhplus.tdd.point.PointHistory;
 import io.hhplus.tdd.service.PointHistoryServiceImpl;
 import io.hhplus.tdd.service.UserPointServiceImpl;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,6 @@ public class PointController {
         this.userPointServiceImpl = userPointServiceImpl;
         this.pointHistoryServiceImpl = pointHistoryServiceImpl;
     }
-
 
     /**
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
@@ -44,15 +45,15 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public ResponseEntity<List<UserPointRespDto>> charge(@PathVariable Long id, @RequestParam(name = "amount") Long amount) {
-        return ResponseEntity.ok(userPointServiceImpl.increaseUserPoint(id, amount));
+    public ResponseEntity<List<UserPointRespDto>> charge(@PathVariable(name = "id") Long id, @RequestBody @Valid UserPointReqDto request) {
+        return ResponseEntity.ok(userPointServiceImpl.increaseUserPoint(id, request.point()));
     }
 
     /**
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public ResponseEntity<List<UserPointRespDto>> use(@PathVariable Long id, @RequestParam(name = "amount") Long amount) {
-        return ResponseEntity.ok(userPointServiceImpl.decreaseUserPoint(id, amount));
+    public ResponseEntity<List<UserPointRespDto>> use(@PathVariable(name = "id") Long id, @RequestBody @Valid UserPointReqDto request) {
+        return ResponseEntity.ok(userPointServiceImpl.decreaseUserPoint(id, request.point()));
     }
 }
