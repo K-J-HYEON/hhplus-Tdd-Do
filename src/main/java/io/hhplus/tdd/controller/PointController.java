@@ -30,7 +30,7 @@ public class PointController {
      */
     @GetMapping("{id}")
     public ResponseEntity<List<UserPointRespDto>> point(@PathVariable(name = "id") Long id) throws InterruptedException {
-        return ResponseEntity.ok(userPointServiceImpl.getUserPoint(id));
+        return ResponseEntity.ok(userPointServiceImpl.point(id));
     }
 
     /**
@@ -38,7 +38,7 @@ public class PointController {
      */
     @GetMapping("{id}/histories")
     public ResponseEntity<List<PointHistory>> history(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(pointHistoryServiceImpl.getUserPointHistory(id));
+        return ResponseEntity.ok(pointHistoryServiceImpl.history(id));
     }
 
     /**
@@ -46,7 +46,7 @@ public class PointController {
      */
     @PatchMapping("{id}/charge")
     public ResponseEntity<List<UserPointRespDto>> charge(@PathVariable(name = "id") Long id, @Valid @RequestBody UserPointReqDto request) {
-        return ResponseEntity.ok(userPointServiceImpl.increaseUserPoint(id, request.point()));
+        return ResponseEntity.ok(userPointServiceImpl.charge(id, request.point()));
     }
 
     /**
@@ -54,6 +54,6 @@ public class PointController {
      */
     @PatchMapping("{id}/use")
     public ResponseEntity<List<UserPointRespDto>> use(@PathVariable(name = "id") Long id, @Valid @RequestBody UserPointReqDto request) {
-        return ResponseEntity.ok(userPointServiceImpl.decreaseUserPoint(id, request.point()));
+        return ResponseEntity.ok(userPointServiceImpl.use(id, request.point()));
     }
 }
