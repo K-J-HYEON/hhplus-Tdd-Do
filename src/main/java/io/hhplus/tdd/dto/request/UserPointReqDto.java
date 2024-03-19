@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 public record UserPointReqDto(
-        @NotNull
         Long point
 ) {
     public UserPointReqDto {

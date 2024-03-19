@@ -115,5 +115,4 @@ public class PointControllerTest {
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.point").value(0L));
     }
-
 }
