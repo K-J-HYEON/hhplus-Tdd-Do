@@ -1,7 +1,6 @@
 package io.hhplus.tdd.service;
 
 import io.hhplus.tdd.dto.response.UserPointRespDto;
-import io.hhplus.tdd.point.UserPoint;
 
 import java.util.List;
 
