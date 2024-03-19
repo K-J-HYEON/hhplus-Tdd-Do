@@ -13,4 +13,8 @@ public record UserPointReqDto(
         Objects.requireNonNull(point, "Point is not null");
     }
 
+    public static UserPointReqDto of(Long amount) {
+        return new UserPointReqDto(amount);
+    }
+
 }
