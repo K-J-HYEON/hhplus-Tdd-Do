@@ -19,7 +19,7 @@ public class UserPointServiceImpl implements UserPointService {
     }
 
     // 1. 포인트 조회
-    public List<UserPointRespDto> getUserPoint(Long id) {
+    public List<UserPointRespDto> point(Long id) {
         try {
             return Collections.singletonList(UserPointRespDto.of(userPointTable.selectById(id)));
         } catch (InterruptedException e) {
@@ -28,7 +28,7 @@ public class UserPointServiceImpl implements UserPointService {
     }
 
     // 2. 포인트 충전
-    public List<UserPointRespDto> increaseUserPoint(Long id, Long amount) {
+    public List<UserPointRespDto> charge(Long id, Long amount) {
         try {
             return Collections.singletonList(UserPointRespDto.of(userPointTable.insertOrUpdate(id, amount)));
         } catch (InterruptedException e) {
@@ -38,7 +38,7 @@ public class UserPointServiceImpl implements UserPointService {
 
 
     // 3. 포인트 사용
-    public List<UserPointRespDto> decreaseUserPoint(Long id, Long amount) {
+    public List<UserPointRespDto> use(Long id, Long amount) {
         try {
             return Collections.singletonList(UserPointRespDto.of(userPointTable.insertOrUpdate(id, amount)));
         } catch (InterruptedException e) {
