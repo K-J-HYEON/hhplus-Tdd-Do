@@ -44,7 +44,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public ResponseEntity<List<UserPointRespDto>> charge(@PathVariable Long id, @RequestParam("amount") Long amount) {
+    public ResponseEntity<List<UserPointRespDto>> charge(@PathVariable Long id, @RequestParam(name = "amount") Long amount) {
         return ResponseEntity.ok(userPointServiceImpl.increaseUserPoint(id, amount));
     }
 
@@ -52,7 +52,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public ResponseEntity<List<UserPointRespDto>> use(@PathVariable Long id, @RequestParam("amount") Long amount) {
+    public ResponseEntity<List<UserPointRespDto>> use(@PathVariable Long id, @RequestParam(name = "amount") Long amount) {
         return ResponseEntity.ok(userPointServiceImpl.decreaseUserPoint(id, amount));
     }
 }
