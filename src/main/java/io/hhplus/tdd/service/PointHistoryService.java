@@ -5,5 +5,5 @@ import io.hhplus.tdd.point.PointHistory;
 import java.util.List;
 
 public interface PointHistoryService {
-    List<PointHistory> getUserPointHistory(Long id);
+    List<PointHistory> history(Long id);
 }
