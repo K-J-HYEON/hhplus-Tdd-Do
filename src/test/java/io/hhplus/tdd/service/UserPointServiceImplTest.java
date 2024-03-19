@@ -46,7 +46,7 @@ public class UserPointServiceImplTest {
         Long updateMills = 1L;
 
         UserPoint expectResult = new UserPoint(userId, point, updateMills);
-        List<UserPointRespDto> result = userPointService.getUserPoint(1L);
+        List<UserPointRespDto> result = userPointService.use(1L, 1000L);
 
         assertThat(result.equals(userId)).isEqualTo(expectResult.equals(userId));
         assertThat(result.equals(point)).isEqualTo(expectResult.equals(point));
@@ -59,9 +59,9 @@ public class UserPointServiceImplTest {
         Long userId = 1L;
         Long amount = 1L;
         UserPointReqDto userPointReqDto = new UserPointReqDto(amount);
-        userPointService.increaseUserPoint(userId, userPointReqDto.point());
+        userPointService.charge(userId, userPointReqDto.point());
 
-        List<PointHistory> userPointRespDto = pointHistoryService.getUserPointHistory(userId);
+        List<PointHistory> userPointRespDto = pointHistoryService.history(userId);
 
         assertThat(userPointRespDto).isNotEmpty();
     }
@@ -71,7 +71,7 @@ public class UserPointServiceImplTest {
     void increaseUserPoint() {
         UserPoint userPoint = new UserPoint(1L, 10L, System.currentTimeMillis());
         assertDoesNotThrow(() -> {
-            userPointService.increaseUserPoint(userPoint.id(), userPoint.point());
+            userPointService.charge(userPoint.id(), userPoint.point());
         });
     }
 
@@ -80,7 +80,7 @@ public class UserPointServiceImplTest {
     void increaseUserPointFailCaseOne() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
-                    userPointService.increaseUserPoint(null, null);
+                    userPointService.charge(null, null);
                 });
     }
 
@@ -89,7 +89,7 @@ public class UserPointServiceImplTest {
     void increaseUserPointFailCaseTwo() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
-                    userPointService.increaseUserPoint(1L, -1000L);
+                    userPointService.charge(1L, -1000L);
                 });
     }
 
@@ -98,7 +98,7 @@ public class UserPointServiceImplTest {
     void decreaseUserPointTest() {
         UserPoint userPoint = new UserPoint(1L, 50L, System.currentTimeMillis());
         assertDoesNotThrow(() -> {
-            userPointService.decreaseUserPoint(userPoint.id(), userPoint.point());
+            userPointService.use(userPoint.id(), userPoint.point());
         });
     }
 
@@ -107,10 +107,10 @@ public class UserPointServiceImplTest {
     void decreaseUserPointUpdateTest() {
         Long chargePoint = 500L;
         UserPoint userPoint = new UserPoint(1L, chargePoint, System.currentTimeMillis());
-        List<UserPointRespDto> chargeUserPoint = userPointService.increaseUserPoint(userPoint.id(), userPoint.point());
+        List<UserPointRespDto> chargeUserPoint = userPointService.charge(userPoint.id(), userPoint.point());
 
         Long usePoint = 100L;
-        List<UserPointRespDto> usedPoint = userPointService.decreaseUserPoint(userPoint.id(), userPoint.point());
+        List<UserPointRespDto> usedPoint = userPointService.use(userPoint.id(), userPoint.point());
         assertThat(usedPoint).isEqualTo(chargePoint - usePoint);
     }
 
@@ -119,7 +119,7 @@ public class UserPointServiceImplTest {
     void decreaseUserPointFailCaseOne() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
-                    userPointService.decreaseUserPoint(null, null);
+                    userPointService.use(null, null);
                 }).withMessageContaining("ID가 null 이거나 point가 null입니다.");
     }
 
@@ -127,13 +127,13 @@ public class UserPointServiceImplTest {
     @DisplayName("포인트 사용 실패 Case 2: 사용 포인트 > 잔액 포인트")
     void decreaseUserPointFailCaseTwo() {
         UserPoint userPoint = new UserPoint(1L, 100L, System.currentTimeMillis());
-        List<UserPointRespDto> chargedUserPoint = userPointService.increaseUserPoint(userPoint.id(), userPoint.point());
+        List<UserPointRespDto> chargedUserPoint = userPointService.charge(userPoint.id(), userPoint.point());
 
         Long useUserPoint = 1000L;
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
                     // 수정해야함 - chargedUserPoint를 반영해야 함
-                    userPointService.decreaseUserPoint(userPoint.id(), useUserPoint);
+                    userPointService.use(userPoint.id(), useUserPoint);
                 }).withMessageContaining("포인트 잔액이 부족합니다.");
     }
 }
