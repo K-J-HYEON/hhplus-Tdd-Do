@@ -16,7 +16,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     }
 
 //     1. 포인트 충전/이용 내역
-    public List<PointHistory> getUserPointHistory(Long id) {
+    public List<PointHistory> history(Long id) {
         return pointHistoryTable.selectAllByUserId(id);
     }
 }
