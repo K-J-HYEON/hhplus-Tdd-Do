@@ -36,9 +36,8 @@ public class PointController {
      */
     @GetMapping("{id}/histories")
     public ResponseEntity<List<PointHistory>> history(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(pointHistoryServiceImpl.getPointHistory(id));
+        return ResponseEntity.ok(pointHistoryServiceImpl.getUserPointHistory(id));
     }
-
 
     /**
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
