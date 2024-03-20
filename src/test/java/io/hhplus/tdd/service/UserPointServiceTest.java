@@ -11,26 +11,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
 public class UserPointServiceTest {
 
-    @Autowired
+
+    @InjectMocks
+    private MockMvc mockMvc;
+    @Mock
     private UserPointServiceImpl userPointService;
 
-    @Autowired
+    @Mock
     private PointHistoryServiceImpl pointHistoryService;
 
-    @Autowired
+    @Mock
     private UserPointTable userPointTable;
 
     @BeforeEach
@@ -47,7 +52,7 @@ public class UserPointServiceTest {
     void pointTest() {
 
         Long userId = 1L;
-        Long point = 1L;
+        Long point = 1000L;
         Long updateMills = 1L;
 
         UserPoint expectResult = new UserPoint(userId, point, updateMills);
@@ -151,9 +156,8 @@ public class UserPointServiceTest {
     // 동시에 여러 건의 포인트 충전 요청이 들어올 경우 순차적으로 처리
     @Test
     @Transactional
-    @DisplayName("같은 사용자가 동시 여러 건의 포인트가 순차적으로 충전")
+    @DisplayName("같은 사용자가 동시에 여러 건의 포인트를 순차적으로 충전")
     void charge100Req() throws InterruptedException {
-
         // given
         final int threadCount = 100;
         // 고정 스레드 풀 32개 생성
@@ -183,7 +187,7 @@ public class UserPointServiceTest {
     // 동시에 여러 건의 포인트 이용 요청이 들어올 경우 순차적으로 처리
     @Test
     @Transactional
-    @DisplayName("같은 사용자가 동시 여러 건의 포인트가 순차적으로 처리")
+    @DisplayName("같은 사용자가 동시에 여러 건의 포인트를 순차적으로 사용")
     void use100Req() throws InterruptedException {
 
         // given
