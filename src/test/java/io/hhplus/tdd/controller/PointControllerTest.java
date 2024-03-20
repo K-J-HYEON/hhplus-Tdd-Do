@@ -45,12 +45,6 @@ public class PointControllerTest {
     @Autowired
     private PointHistoryTable pointHistoryTable;
 
-    @Mock
-    private UserPointReqDto userPointReqDto;
-
-    @InjectMocks
-    private PointController pointController;
-
     @BeforeEach
     void setUp() throws InterruptedException {
         Long userId = 1L;
