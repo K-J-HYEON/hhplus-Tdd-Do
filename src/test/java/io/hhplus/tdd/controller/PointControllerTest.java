@@ -33,16 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class PointControllerTest {
 
-    @Autowired
+    @InjectMocks
     private MockMvc mockMvc;
-
-    @Autowired
+    @Mock
     private ObjectMapper objectMapper;
-
-    @Autowired
+    @Mock
     private UserPointTable userPointTable;
-
-    @Autowired
+    @Mock
     private PointHistoryTable pointHistoryTable;
 
     @BeforeEach
