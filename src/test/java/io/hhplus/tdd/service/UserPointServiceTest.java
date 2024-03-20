@@ -11,24 +11,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
 public class UserPointServiceTest {
 
-    @Mock
-    private UserPointReqDto userPointReqDto;
-
-    @InjectMocks
+    @Autowired
     private UserPointServiceImpl userPointService;
 
-    @InjectMocks
+    @Autowired
     private PointHistoryServiceImpl pointHistoryService;
+
+    @Autowired
+    private UserPointTable userPointTable;
 
     @BeforeEach
     void setUp() {
@@ -110,7 +113,6 @@ public class UserPointServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("포인트 사용 시 포인트 업데이트")
     void usePointUpdateTest() {
         Long chargePoint = 500L;
@@ -123,7 +125,6 @@ public class UserPointServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("포인트 사용 실패 Case 1: ID 또는 사용 포인트가 null")
     void useFailCaseOneTest() {
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -133,7 +134,6 @@ public class UserPointServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("포인트 사용 실패 Case 2: 사용 포인트 > 잔액 포인트")
     void useFailCaseTwoTest() {
         UserPoint userPoint = new UserPoint(1L, 100L, System.currentTimeMillis());
@@ -146,5 +146,69 @@ public class UserPointServiceTest {
                     userPointService.use(userPoint.id(), useUserPoint);
                 }).withMessageContaining("포인트 잔액이 부족합니다.");
 
+    }
+
+    // 동시에 여러 건의 포인트 충전 요청이 들어올 경우 순차적으로 처리
+    @Test
+    @Transactional
+    @DisplayName("같은 사용자가 동시 여러 건의 포인트가 순차적으로 충전")
+    void charge100Req() throws InterruptedException {
+
+        // given
+        final int threadCount = 100;
+        // 고정 스레드 풀 32개 생성
+        final ExecutorService executorService = Executors.newFixedThreadPool(32);
+        // 설정한 스레드 개수 100개만큼의 count 가진 CountDownLatch 생성
+        final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        // when
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    userPointService.charge(1L, 1000L);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        // 수정 필요 orElseThrow 추가 해야할듯
+        countDownLatch.await();
+        final UserPoint userPoint = userPointTable.insertOrUpdate(1L, 1000L);
+
+        // then
+        assertThat(userPoint.point()).isEqualTo(0);
+    }
+
+
+    // 동시에 여러 건의 포인트 이용 요청이 들어올 경우 순차적으로 처리
+    @Test
+    @Transactional
+    @DisplayName("같은 사용자가 동시 여러 건의 포인트가 순차적으로 처리")
+    void use100Req() throws InterruptedException {
+
+        // given
+        final int threadCount = 100;
+        // 고정 스레드 풀 32개 생성
+        final ExecutorService executorService = Executors.newFixedThreadPool(32);
+        // 설정한 스레드 개수 100개만큼의 count 가진 CountDownLatch 생성
+        final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        // when
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    userPointService.use(1L, 1000L);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        // 수정 필요
+        countDownLatch.await();
+        final UserPoint userPoint = userPointTable.insertOrUpdate(1L, -1000L);
+
+        // then
+        assertThat(userPoint.point()).isEqualTo(0);
     }
 }
