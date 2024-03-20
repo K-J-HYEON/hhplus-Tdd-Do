@@ -4,6 +4,8 @@ import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.point.PointHistory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Slf4j
@@ -16,6 +18,8 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     }
 
 //     1. 포인트 충전/이용 내역
+
+    @Transactional(readOnly = true)
     public List<PointHistory> history(Long id) {
         return pointHistoryTable.selectAllByUserId(id);
     }
