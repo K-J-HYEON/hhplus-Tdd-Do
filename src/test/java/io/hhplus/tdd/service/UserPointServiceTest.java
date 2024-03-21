@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -28,7 +27,8 @@ public class UserPointServiceTest {
 
 
     @InjectMocks
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
+
     @Mock
     private UserPointServiceImpl userPointService;
 
@@ -150,18 +150,20 @@ public class UserPointServiceTest {
                     // 수정해야함 - chargedUserPoint를 반영해야 함
                     userPointService.use(userPoint.id(), useUserPoint);
                 }).withMessageContaining("포인트 잔액이 부족합니다.");
-
     }
 
     // 동시에 여러 건의 포인트 충전 요청이 들어올 경우 순차적으로 처리
     @Test
     @Transactional
     @DisplayName("같은 사용자가 동시에 여러 건의 포인트를 순차적으로 충전")
-    void charge100Req() throws InterruptedException {
+    void chargeManyReq() throws InterruptedException {
+
         // given
         final int threadCount = 100;
+
         // 고정 스레드 풀 32개 생성
         final ExecutorService executorService = Executors.newFixedThreadPool(32);
+
         // 설정한 스레드 개수 100개만큼의 count 가진 CountDownLatch 생성
         final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
@@ -188,7 +190,7 @@ public class UserPointServiceTest {
     @Test
     @Transactional
     @DisplayName("같은 사용자가 동시에 여러 건의 포인트를 순차적으로 사용")
-    void use100Req() throws InterruptedException {
+    void useManyReq() throws InterruptedException {
 
         // given
         final int threadCount = 100;
