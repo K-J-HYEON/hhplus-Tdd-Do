@@ -25,9 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ExtendWith(MockitoExtension.class)
 public class UserPointServiceTest {
 
-
-    @InjectMocks
-    MockMvc mockMvc;
+//    @InjectMocks
+//    MockMvc mockMvc;
 
     @Mock
     private UserPointServiceImpl userPointService;
@@ -43,7 +42,7 @@ public class UserPointServiceTest {
         UserPointTable userPointTable = new UserPointTable();
         PointHistoryTable pointHistoryTable = new PointHistoryTable();
         userPointService = new UserPointServiceImpl(userPointTable);
-        pointHistoryService = new PointHistoryServiceImpl(pointHistoryTable);
+        pointHistoryService = new PointHistoryServiceImpl(userPointTable, pointHistoryTable);
     }
 
     @Test
