@@ -29,7 +29,7 @@ class UserPointServiceTest {
      * 2. userPoint가 사용금액보다 적으면 예외를 반환.
      * 3. 잔액이 반영된 userPoint는 userPointTable에 저장.
      * 4. userPointTable.insert가 정상적으로 결과를 반환하면 그 결과를 그대로 반환.
-     * 5. userPointTable.insert가 예외를 던지면 예외를 반환합니다.
+     * 5. userPointTable.insert가 예외를 던지면 예외를 반환.
      */
 
     @Test
