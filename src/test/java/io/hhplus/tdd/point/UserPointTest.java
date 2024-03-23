@@ -33,7 +33,7 @@ class UserPointTest {
         Exception e = null;
 
         try {
-            userPoint.use(100000, updateMillis);
+            userPoint.use(1000000, updateMillis);
         } catch (Exception exception) {
             e = exception;
         }
