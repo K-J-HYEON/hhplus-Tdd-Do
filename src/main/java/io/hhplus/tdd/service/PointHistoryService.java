@@ -1,9 +1,14 @@
 package io.hhplus.tdd.service;
 
-import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.database.PointHistoryTable;
 
-import java.util.List;
+public class PointHistoryService {
+    private final PointHistoryTable pointHistoryTable;
 
-public interface PointHistoryService {
-    List<PointHistory> history(Long id);
+    public PointHistoryService(PointHistoryTable pointHistoryTable) {
+        this.pointHistoryTable = pointHistoryTable;
+    }
+
+    // 1. 포인트 충전/이용 내역
+
 }

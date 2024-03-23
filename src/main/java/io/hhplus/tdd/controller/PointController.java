@@ -1,13 +1,12 @@
 package io.hhplus.tdd.controller;
 
-import io.hhplus.tdd.dto.request.UserPointReqDto;
-import io.hhplus.tdd.dto.response.UserPointRespDto;
+import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.PointHistory;
-import io.hhplus.tdd.service.PointHistoryServiceImpl;
-import io.hhplus.tdd.service.UserPointServiceImpl;
-import jakarta.validation.Valid;
+import io.hhplus.tdd.point.UserPoint;
+import io.hhplus.tdd.service.UserPointService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,44 +15,49 @@ import java.util.List;
 @RequestMapping("/point")
 @RestController
 public class PointController {
+    UserPointService pointService = new UserPointService(new UserPointTable());
 
-    private final UserPointServiceImpl userPointServiceImpl;
-    private final PointHistoryServiceImpl pointHistoryServiceImpl;
-
-    public PointController(UserPointServiceImpl userPointServiceImpl, PointHistoryServiceImpl pointHistoryServiceImpl) {
-        this.userPointServiceImpl = userPointServiceImpl;
-        this.pointHistoryServiceImpl = pointHistoryServiceImpl;
-    }
+    private static final Logger log = LoggerFactory.getLogger(PointController.class);
 
     /**
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}")
-    public ResponseEntity<List<UserPointRespDto>> point(@PathVariable(name = "id") Long id) throws InterruptedException {
-        return ResponseEntity.ok(userPointServiceImpl.point(id));
+    public UserPoint point(
+            @PathVariable long id
+    ) {
+        return new UserPoint(0, 0, 0);
     }
 
     /**
      * TODO - 특정 유저의 포인트 충전/이용 내역을 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}/histories")
-    public ResponseEntity<List<PointHistory>> history(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(pointHistoryServiceImpl.history(id));
+    public List<PointHistory> history(
+            @PathVariable long id
+    ) {
+        return List.of();
     }
 
     /**
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public ResponseEntity<List<UserPointRespDto>> charge(@PathVariable(name = "id") Long id, @Valid @RequestBody UserPointReqDto request) {
-        return ResponseEntity.ok(userPointServiceImpl.charge(id, request.point()));
+    public UserPoint charge(
+            @PathVariable long id,
+            @RequestBody long amount
+    ) {
+        return new UserPoint(0, 0, 0);
     }
 
     /**
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public ResponseEntity<List<UserPointRespDto>> use(@PathVariable(name = "id") Long id, @Valid @RequestBody UserPointReqDto request) {
-        return ResponseEntity.ok(userPointServiceImpl.use(id, request.point()));
+    public UserPoint use(
+            @PathVariable long id,
+            @RequestBody long amount
+    ) {
+        return new UserPoint(0, 0, 0);
     }
 }
