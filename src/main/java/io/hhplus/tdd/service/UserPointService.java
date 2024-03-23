@@ -25,8 +25,10 @@ public class UserPointService {
 //        return userPointTable.insertOrUpdate(id, userPoint.point);
 //    }
 
+    // 2. 포인트 충전/이용 내역
 
-    // 2. 포인트 충전
+
+    // 3. 포인트 충전
     public UserPoint charge(long id, long amount) throws InterruptedException {
         UserPoint userPoint = userPointTable.selectById(id);
         if (userPoint == null) {
@@ -36,7 +38,7 @@ public class UserPointService {
         return userPointTable.insertOrUpdate(id, userPoint.point);
     }
 
-    // 3. 포인트 사용
+    // 4. 포인트 사용
     public UserPoint use(long id, long amount) throws InterruptedException {
         UserPoint userPoint = userPointTable.selectById(id);
         if (userPoint == null) {
