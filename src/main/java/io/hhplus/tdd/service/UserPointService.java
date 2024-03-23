@@ -15,15 +15,14 @@ public class UserPointService {
 
     UserPointTable userPointTable;
 
-    // 1. 포인트 조회
-//    public UserPoint point(long id, long amount) throws InterruptedException {
-//        UserPoint userPoint = userPointTable.selectById(id);
-//        if (userPoint == null) {
-//            throw new RuntimeException();
-//        }
-//        userPoint.point(amount, new Date().getTime());
-//        return userPointTable.insertOrUpdate(id, userPoint.point);
-//    }
+//     1. 포인트 조회
+    public UserPoint point(long id, long amount) throws InterruptedException {
+        UserPoint userPoint = userPointTable.selectById(id);
+        if (userPoint == null) {
+            throw new RuntimeException();
+        }
+        return userPointTable.selectById(id);
+    }
 
     // 2. 포인트 충전/이용 내역
 
