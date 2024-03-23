@@ -5,7 +5,7 @@ import java.util.Date;
 class UserPointTest {
 
     @Test
-    public void test() {
+    public void test1() {
         UserPoint userPoint = new UserPoint(1, 100000, 0);
         long updateMillis = new Date().getTime();
         userPoint.charge(0, updateMillis);
