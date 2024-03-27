@@ -1,5 +1,7 @@
 package io.hhplus.tdd.service;
 
+import io.hhplus.tdd.TestErrorType;
+import io.hhplus.tdd.TestException;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.PointHistory;
@@ -20,11 +22,11 @@ public class UserPointService {
 
     PointHistoryTable pointHistoryTable;
 
-//     1. 포인트 조회
+    // 1. 포인트 조회
     public UserPoint point(long id, long amount) throws InterruptedException {
         UserPoint userPoint = userPointTable.selectById(id);
         if (userPoint == null) {
-            throw new RuntimeException();
+            throw new TestException(TestErrorType.POINT_NOT_FOUND);
         }
         return userPointTable.selectById(id);
     }
@@ -42,9 +44,9 @@ public class UserPointService {
 
     // 3. 포인트 충전
     public UserPoint charge(long id, long amount) throws InterruptedException {
-        UserPoint userPoint = userPointTable.selectById(id);
+        UserPoint userPoint = userPointTable.insertOrUpdate(id, amount);
         if (userPoint == null) {
-            throw new RuntimeException();
+            throw new TestException(TestErrorType.NOT_ENOUGH_MONEY);
         }
         userPoint.charge(amount, new Date().getTime());
         return userPointTable.insertOrUpdate(id, userPoint.point);
@@ -52,9 +54,9 @@ public class UserPointService {
 
     // 4. 포인트 사용
     public UserPoint use(long id, long amount) throws InterruptedException {
-        UserPoint userPoint = userPointTable.selectById(id);
+        UserPoint userPoint = userPointTable.insertOrUpdate(id, amount);
         if (userPoint == null) {
-            throw new RuntimeException();
+            throw new TestException(TestErrorType.POINT_NOT_FOUND);
         }
         userPoint.use(amount, new Date().getTime());
         return userPointTable.insertOrUpdate(id, userPoint.point);
