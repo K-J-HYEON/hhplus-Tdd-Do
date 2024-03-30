@@ -1,7 +1,6 @@
 package io.hhplus.tdd.service;
 
 import static org.assertj.core.api.Assertions.*;
-import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.dto.response.UserPointRespDto;
 import io.hhplus.tdd.point.UserPoint;
@@ -20,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
 public class UserPointServiceTest {
+
 
     @InjectMocks
     UserPointServiceImpl sut;
