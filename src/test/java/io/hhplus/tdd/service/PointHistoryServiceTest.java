@@ -35,7 +35,7 @@ class PointHistoryServiceTest {
         Long userId = 1L;
         Long amount = 1L;
         UserPointReqDto userPointReqDto = new UserPointReqDto(amount);
-//        sut.charge(userId, userPointReqDto.point());
+        sut.history(userId);
 
         List<PointHistory> userPointRespDto = sut.history(userId);
         assertThat(userPointRespDto).isNotEmpty();
